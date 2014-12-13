@@ -1,95 +1,144 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 Reading the csv file
-```{r 1_1}
+
+```r
 dat0 <- read.csv("activity.csv")
 ```
 Transforming Date variable from character to date format
-```{r 1_2}
+
+```r
 dat0$date <- as.Date(dat0$date,"%Y-%m-%d")
 ```
 
 ## What is mean total number of steps taken per day?
 Aggregating total no of steps over day to new data frame
-```{r 2_1}
+
+```r
 dat1 <- aggregate(steps~date,dat0,sum,na.rm=TRUE)
 ```
 Plotting histogram of total number of steps per day
-```{r 2_2}
+
+```r
 hist(dat1$steps,main="Histogram of Total Steps per Day",xlab="No of Steps")
 ```
 
+![](./PA1_template_files/figure-html/2_2-1.png) 
+
 Mean and median of total number of steps per day
-```{r 2_3}
+
+```r
 mean(dat1$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(dat1$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 Aggregating average no of steps over interval to new data frame
-```{r 3_1}
+
+```r
 dat2 <- aggregate(steps~interval,dat0,mean,na.rm=TRUE)
 ```
 Plotting time series plot of average daily activity pattern
-```{r 3_2}
+
+```r
 plot(dat2$interval,dat2$steps,main="Average Daily Activity Pattern",
      xlab="5-Minute Interval",ylab="Average No of Steps",type="l")
 ```
 
+![](./PA1_template_files/figure-html/3_2-1.png) 
+
 Getting interval which contains max no of steps
-```{r 3_3}
+
+```r
 dat2$interval[which(dat2$steps==max(dat2$steps))]
+```
+
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 Getting total number of missing values
-```{r 4_1}
+
+```r
 sum(is.na(dat0))
 ```
+
+```
+## [1] 2304
+```
 Using mean no of steps per 5-minute interval for missing values imputation
-```{r 4_2}
+
+```r
 dat3 <- dat0
 dat3$steps[is.na(dat3$steps)] <- dat2[match(dat0$interval[is.na(dat0$steps)],
                                             dat2$interval),"steps"]
 ```
 Aggregate average no of steps over day to new data frame
-```{r 4_3}
+
+```r
 dat4 <- aggregate(steps~date,dat3,sum,na.rm=TRUE)
 ```
 Plotting histogram of total steps per day after imputation
-```{r 4_4}
+
+```r
 hist(dat4$steps,main="Histogram of Total Steps per Day",xlab="No of Steps")
 ```
+
+![](./PA1_template_files/figure-html/4_4-1.png) 
 
 Getting mean and median of total steps per day, similar to mean and median 
 before imputation as my imputation strategy is using no of steps for 5-minute
 interval averaged over day
-```{r 4_5}
+
+```r
 mean(dat4$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(dat4$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 Creating new factor variable which indicates weekday or weekend
-```{r 5_1}
+
+```r
 dat3$daytype <- ifelse(weekdays(dat3$date) %in% c("Saturday","Sunday"),
                        "weekend","weekday")
 dat3$daytype <- as.factor(dat3$daytype)
 ```
 Aggregating no of steps over interval and daytype to a new data frame
-```{r 5_2}
+
+```r
 dat5 <- aggregate(steps~interval+daytype,dat3,mean,na.rm=TRUE)
 ```
 Plotting time series plot of average daily activity pattern by weekday and weekend
-```{r 5_3}
+
+```r
 library(lattice)
 xyplot(steps ~ interval | daytype, data=dat5, type="l", layout=c(1,2),
        xlab="Interval", ylab="No of Steps")
 ```
+
+![](./PA1_template_files/figure-html/5_3-1.png) 
