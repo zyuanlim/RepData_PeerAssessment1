@@ -46,7 +46,7 @@ median(dat1$steps)
 ```
 
 ## What is the average daily activity pattern?
-Aggregating average no of steps over interval to new data frame
+Aggregating mean no of steps over interval to new data frame
 
 ```r
 dat2 <- aggregate(steps~interval,dat0,mean,na.rm=TRUE)
@@ -87,7 +87,7 @@ dat3 <- dat0
 dat3$steps[is.na(dat3$steps)] <- dat2[match(dat0$interval[is.na(dat0$steps)],
                                             dat2$interval),"steps"]
 ```
-Aggregate average no of steps over day to new data frame
+Aggregate total no of steps over day to new data frame
 
 ```r
 dat4 <- aggregate(steps~date,dat3,sum,na.rm=TRUE)
@@ -100,7 +100,7 @@ hist(dat4$steps,main="Histogram of Total Steps per Day",xlab="No of Steps")
 
 ![](./PA1_template_files/figure-html/4_4-1.png) 
 
-Getting mean and median of total steps per day, similar to mean and median 
+Getting mean and median of total steps per day, the values are close to mean and median 
 before imputation as my imputation strategy is using no of steps for 5-minute
 interval averaged over day
 
@@ -128,7 +128,7 @@ dat3$daytype <- ifelse(weekdays(dat3$date) %in% c("Saturday","Sunday"),
                        "weekend","weekday")
 dat3$daytype <- as.factor(dat3$daytype)
 ```
-Aggregating no of steps over interval and daytype to a new data frame
+Aggregating mean no of steps over interval and daytype to a new data frame
 
 ```r
 dat5 <- aggregate(steps~interval+daytype,dat3,mean,na.rm=TRUE)
